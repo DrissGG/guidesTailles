@@ -66,51 +66,65 @@
         </div>
         <div class="form-container">
             <h2>Entrez vos mesures</h2>
-            <label>Buste (A) en cm :</label>
-            <input type="number" id="buste" required>
+            <form id="sizeForm">
+                <label for="buste">Buste (A) en cm :</label>
+                <input type="number" id="buste" required>
 
-            <label>Taille (B) en cm :</label>
-            <input type="number" id="taille" required>
+                <label for="taille">Taille (B) en cm :</label>
+                <input type="number" id="taille" required>
 
-            <label>Hanches (C) en cm :</label>
-            <input type="number" id="hanches" required>
+                <label for="hips">Hanches (C) en cm :</label>
+                <input type="number" id="hips" required>
 
-            <label>Tour de torse (D) en cm :</label>
-            <input type="number" id="torse" required>
+                <label for="torso">Tour de torse (D) en cm :</label>
+                <input type="number" id="torso" required>
 
-            <label>Adresse Email :</label>
-            <input type="email" id="email" required>
-
-            <button onclick="calculerTaille()">Obtenir ma taille</button>
-            <p id="resultat"></p>
+                <button type="submit">Calculer ma taille</button>
+            </form>
+            <p id="result"></p>
         </div>
     </div>
 
     <script>
-        function calculerTaille() {
-            const buste = parseFloat(document.getElementById('buste').value);
-            const taille = parseFloat(document.getElementById('taille').value);
-            const hanches = parseFloat(document.getElementById('hanches').value);
-            const torse = parseFloat(document.getElementById('torse').value);
-            const email = document.getElementById('email').value;
+        document.getElementById("sizeForm").addEventListener("submit", function (event) {
+            event.preventDefault();
 
-            if (!email.includes('@')) {
-                document.getElementById('resultat').innerText = "Veuillez entrer un email valide.";
-                return;
-            }
+            let hips = parseInt(document.getElementById("hips").value); // C
+            let torso = parseInt(document.getElementById("torso").value); // D
 
-            const tailles = [28, 30, 32, 34, 36, 38, 40];
-            const busteRanges = [[78, 84], [84, 89], [89, 94], [94, 98], [98, 102], [102, 106], [106, 108]];
+            let sizeChart = [
+                { size: 28, hips: [80, 85], torso: [136, 143] },
+                { size: 30, hips: [85, 90], torso: [146, 153] },
+                { size: 32, hips: [90, 95], torso: [156, 163] },
+                { size: 34, hips: [95, 100], torso: [166, 173] },
+                { size: 36, hips: [100, 105], torso: [171, 178] },
+                { size: 38, hips: [105, 110], torso: [176, 183] },
+                { size: 40, hips: [110, 115], torso: [181, 186] }
+            ];
 
-            for (let i = 0; i < busteRanges.length; i++) {
-                if (buste >= busteRanges[i][0] && buste <= busteRanges[i][1]) {
-                    document.getElementById('resultat').innerText = "Votre taille de combinaison est : " + tailles[i];
-                    return;
+            let chosenSize = null;
+
+            for (let i = 0; i < sizeChart.length; i++) {
+                let sizeData = sizeChart[i];
+
+                // Vérifier si les mesures correspondent à une taille
+                if (hips >= sizeData.hips[0] && hips <= sizeData.hips[1] &&
+                    torso >= sizeData.torso[0] && torso <= sizeData.torso[1]) {
+                    chosenSize = sizeData.size;
+                    break;
                 }
             }
 
-            document.getElementById('resultat').innerText = "Désolé, nous ne trouvons pas votre taille.";
-        }
+            // Si aucune taille exacte trouvée, on propose la plus proche
+            if (!chosenSize) {
+                let closestSize = sizeChart.find(sizeData =>
+                    hips >= sizeData.hips[0] || torso >= sizeData.torso[0]
+                );
+                chosenSize = closestSize ? closestSize.size : "Aucune taille trouvée.";
+            }
+
+            document.getElementById("result").innerText = "Votre taille recommandée : " + chosenSize;
+        });
     </script>
 </body>
 
