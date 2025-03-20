@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcul de Taille de Combinaison</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 20px;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            max-width: 600px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+        }
+
+        .image-container {
+            flex: 1;
+            text-align: left;
+        }
+
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+        }
+
+        .form-container {
+            flex: 1;
+            padding-left: 20px;
+        }
+
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+        }
+
+        button {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            padding: 10px;
+            width: 100%;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="image-container">
+            <img src="arena-size-guide.jpg" alt="Guide des tailles">
+        </div>
+        <div class="form-container">
+            <h2>Entrez vos mesures</h2>
+            <label>Buste (A) en cm :</label>
+            <input type="number" id="buste" required>
+
+            <label>Taille (B) en cm :</label>
+            <input type="number" id="taille" required>
+
+            <label>Hanches (C) en cm :</label>
+            <input type="number" id="hanches" required>
+
+            <label>Tour de torse (D) en cm :</label>
+            <input type="number" id="torse" required>
+
+            <label>Adresse Email :</label>
+            <input type="email" id="email" required>
+
+            <button onclick="calculerTaille()">Obtenir ma taille</button>
+            <p id="resultat"></p>
+        </div>
+    </div>
+
+    <script>
+        function calculerTaille() {
+            const buste = parseFloat(document.getElementById('buste').value);
+            const taille = parseFloat(document.getElementById('taille').value);
+            const hanches = parseFloat(document.getElementById('hanches').value);
+            const torse = parseFloat(document.getElementById('torse').value);
+            const email = document.getElementById('email').value;
+
+            if (!email.includes('@')) {
+                document.getElementById('resultat').innerText = "Veuillez entrer un email valide.";
+                return;
+            }
+
+            const tailles = [28, 30, 32, 34, 36, 38, 40];
+            const busteRanges = [[78, 84], [84, 89], [89, 94], [94, 98], [98, 102], [102, 106], [106, 108]];
+
+            for (let i = 0; i < busteRanges.length; i++) {
+                if (buste >= busteRanges[i][0] && buste <= busteRanges[i][1]) {
+                    document.getElementById('resultat').innerText = "Votre taille de combinaison est : " + tailles[i];
+                    return;
+                }
+            }
+
+            document.getElementById('resultat').innerText = "Désolé, nous ne trouvons pas votre taille.";
+        }
+    </script>
+</body>
+
+</html>
