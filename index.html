@@ -6,125 +6,269 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Calcul de Taille de Combinaison</title>
     <style>
+        /* Styles généraux */
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f7fc;
+            color: #333;
             text-align: center;
-            margin: 20px;
+            margin: 0;
+            padding: 20px;
         }
 
+        /* Conteneur principal */
         .container {
             display: flex;
-            align-items: center;
             justify-content: center;
-            max-width: 600px;
+            align-items: center;
+            max-width: 800px;
             margin: auto;
-            padding: 20px;
-            border: 1px solid #ddd;
+            padding: 30px;
+            background: #ffffff;
+            border-radius: 15px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Image */
+        .image-container img {
+            max-width: 80%;
             border-radius: 10px;
         }
 
-        .image-container {
+        /* Formulaire */
+        .form-container {
             flex: 1;
+            padding: 20px;
             text-align: left;
         }
 
-        .image-container img {
-            max-width: 100%;
-            height: auto;
+        h2 {
+            font-size: 22px;
+            font-weight: 600;
+            color: #007BFF;
+            margin-bottom: 15px;
         }
 
-        .form-container {
-            flex: 1;
-            padding-left: 20px;
+        /* Labels et Inputs */
+        label {
+            font-weight: 500;
+            display: block;
+            margin-top: 10px;
+            color: #555;
         }
 
-        input {
-            width: 100%;
-            padding: 8px;
-            margin: 5px 0;
+        input,
+        select {
+            width: 70%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: 0.3s;
         }
 
+        input:focus,
+        select:focus {
+            border-color: #007BFF;
+            box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.3);
+            outline: none;
+        }
+
+        /* Bouton */
         button {
-            background-color: #007BFF;
+            background: #007BFF;
             color: white;
             border: none;
-            padding: 10px;
+            padding: 12px;
             width: 100%;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
             cursor: pointer;
+            transition: 0.3s;
+            margin-top: 15px;
         }
 
         button:hover {
-            background-color: #0056b3;
+            background: #0056b3;
+        }
+
+        /* Messages */
+        #result {
+            font-size: 18px;
+            font-weight: 600;
+            color: #007BFF;
+            margin-top: 15px;
+        }
+
+        #confirmationMessage {
+            font-size: 14px;
+            color: #666;
+            margin-top: 10px;
+            font-style: italic;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                padding: 20px;
+            }
         }
     </style>
 </head>
 
 <body>
+    <h2>Calcul de Taille de Combinaison</h2>
+    <label for="genre">Sélectionnez votre genre :</label>
+    <select id="genre" onchange="updateForm()">
+        <option value="femme">Femme</option>
+        <option value="homme">Homme</option>
+    </select>
+
     <div class="container">
         <div class="image-container">
-            <img src="arena-size-guide.jpg" alt="Guide des tailles">
+            <img id="guideImage" src="arena-size-guide-femme.jpg" alt="Guide des tailles">
         </div>
         <div class="form-container">
             <h2>Entrez vos mesures</h2>
             <form id="sizeForm">
-                <label for="buste">Buste (A) en cm :</label>
-                <input type="number" id="buste" required>
+                <div id="femmeFields">
+                    <label for="buste">Buste (A) en cm :</label>
+                    <input type="number" id="buste">
 
-                <label for="taille">Taille (B) en cm :</label>
-                <input type="number" id="taille" required>
+                    <label for="taille">Taille (B) en cm :</label>
+                    <input type="number" id="taille">
 
-                <label for="hips">Hanches (C) en cm :</label>
-                <input type="number" id="hips" required>
+                    <label for="hips">Hanches (C) en cm :</label>
+                    <input type="number" id="hips">
 
-                <label for="torso">Tour de torse (D) en cm :</label>
-                <input type="number" id="torso" required>
+                    <label for="torso">Tour de torse (D) en cm :</label>
+                    <input type="number" id="torso">
+                </div>
+
+                <div id="hommeFields" style="display: none;">
+                    <label for="tailleH">Taille (A) en cm :</label>
+                    <input type="number" id="tailleH">
+
+                    <label for="hipsH">Hanches (B) en cm :</label>
+                    <input type="number" id="hipsH">
+                </div>
 
                 <button type="submit">Calculer ma taille</button>
             </form>
             <p id="result"></p>
+            <p id="confirmationMessage" style="font-style: italic; color: #666; margin-top: 10px;"></p>
         </div>
     </div>
 
     <script>
+        let formData = {
+            buste: "",
+            taille: "",
+            hips: "",
+            torso: "",
+            tailleH: "",
+            hipsH: ""
+        };
+
+        function updateForm() {
+            let genre = document.getElementById("genre").value;
+
+            // Changer l'image et afficher les bons champs
+            if (genre === "femme") {
+                document.getElementById("femmeFields").style.display = "block";
+                document.getElementById("hommeFields").style.display = "none";
+                document.getElementById("guideImage").src = "arena-size-guide-femme.jpg";
+            } else {
+                document.getElementById("femmeFields").style.display = "none";
+                document.getElementById("hommeFields").style.display = "block";
+                document.getElementById("guideImage").src = "arena-size-guide-homme.jpg";
+            }
+
+            // 🔥 Réinitialiser toutes les entrées du formulaire
+            document.querySelectorAll("input").forEach(input => input.value = "");
+
+            // 🔥 Réinitialiser l'objet `formData`
+            formData = { buste: "", taille: "", hips: "", torso: "", tailleH: "", hipsH: "" };
+
+            // 🔥 Réinitialiser les résultats et le message de confirmation
+            document.getElementById("result").innerText = "";
+            document.getElementById("confirmationMessage").innerText = "";
+        }
+
+        // Sauvegarde automatique des valeurs du formulaire
+        document.querySelectorAll("input").forEach(input => {
+            input.addEventListener("input", function () {
+                formData[this.id] = this.value; // Enregistre la valeur entrée
+            });
+        });
+
         document.getElementById("sizeForm").addEventListener("submit", function (event) {
             event.preventDefault();
+            let genre = document.getElementById("genre").value;
+            let chosenSize = "Aucune taille trouvée.";
 
-            let hips = parseInt(document.getElementById("hips").value); // C
-            let torso = parseInt(document.getElementById("torso").value); // D
+            if (genre === "femme") {
+                let buste = Number(document.getElementById("buste").value) || 0;
+                let taille = Number(document.getElementById("taille").value) || 0;
+                let hips = Number(document.getElementById("hips").value) || 0;
+                let torso = Number(document.getElementById("torso").value) || 0;
 
-            let sizeChart = [
-                { size: 28, hips: [80, 85], torso: [136, 143] },
-                { size: 30, hips: [85, 90], torso: [146, 153] },
-                { size: 32, hips: [90, 95], torso: [156, 163] },
-                { size: 34, hips: [95, 100], torso: [166, 173] },
-                { size: 36, hips: [100, 105], torso: [171, 178] },
-                { size: 38, hips: [105, 110], torso: [176, 183] },
-                { size: 40, hips: [110, 115], torso: [181, 186] }
-            ];
+                let sizeChartFemme = [
+                    { size: 28, hips: [80, 85] },
+                    { size: 30, hips: [85, 90] },
+                    { size: 32, hips: [90, 95] },
+                    { size: 34, hips: [95, 100] },
+                    { size: 36, hips: [100, 105] },
+                    { size: 38, hips: [105, 110] },
+                    { size: 40, hips: [110, 115] }
+                ];
 
-            let chosenSize = null;
+                let sizeByHips = sizeChartFemme.find(s => hips >= s.hips[0] && hips <= s.hips[1]);
 
-            for (let i = 0; i < sizeChart.length; i++) {
-                let sizeData = sizeChart[i];
-
-                // Vérifier si les mesures correspondent à une taille
-                if (hips >= sizeData.hips[0] && hips <= sizeData.hips[1] &&
-                    torso >= sizeData.torso[0] && torso <= sizeData.torso[1]) {
-                    chosenSize = sizeData.size;
-                    break;
+                if (sizeByHips) {
+                    chosenSize = sizeByHips.size;
                 }
-            }
 
-            // Si aucune taille exacte trouvée, on propose la plus proche
-            if (!chosenSize) {
-                let closestSize = sizeChart.find(sizeData =>
-                    hips >= sizeData.hips[0] || torso >= sizeData.torso[0]
-                );
-                chosenSize = closestSize ? closestSize.size : "Aucune taille trouvée.";
-            }
+                document.getElementById("result").innerText = "Votre taille recommandée : " + chosenSize;
+                document.getElementById("confirmationMessage").innerText =
+                    "Cette estimation est donnée à titre indicatif. Pour un ajustement optimal, nous vous recommandons de confirmer votre taille avec un professionnel. N'hésitez pas à nous contacter pour obtenir des conseils personnalisés.";
 
-            document.getElementById("result").innerText = "Votre taille recommandée : " + chosenSize;
+
+            } else if (genre === "homme") {
+                let tailleH = Number(document.getElementById("tailleH").value) || 0;
+                let hanches = Number(document.getElementById("hipsH").value) || 0;
+
+                let sizeChartHomme = [
+                    { size: 55, taille: [65, 70], hanches: [80, 84] },
+                    { size: 60, taille: [70, 75], hanches: [85, 90] },
+                    { size: 65, taille: [75, 80], hanches: [90, 94] },
+                    { size: 70, taille: [80, 85], hanches: [95, 100] },
+                    { size: 75, taille: [85, 90], hanches: [101, 104] },
+                    { size: 80, taille: [90, 95], hanches: [105, 110] },
+                    { size: 85, taille: [95, 100], hanches: [111, 115] }
+                ];
+
+                let sizeByTaille = sizeChartHomme.find(s => tailleH >= s.taille[0] && tailleH <= s.taille[1]);
+                let sizeByHanches = sizeChartHomme.find(s => hanches >= s.hanches[0] && hanches <= s.hanches[1]);
+
+                if (sizeByTaille && sizeByHanches) {
+                    chosenSize = Math.min(sizeByTaille.size, sizeByHanches.size);
+                } else if (sizeByTaille) {
+                    chosenSize = sizeByTaille.size;
+                } else if (sizeByHanches) {
+                    chosenSize = sizeByHanches.size;
+                }
+
+                document.getElementById("result").innerText = "Votre taille recommandée : " + chosenSize;
+                document.getElementById("confirmationMessage").innerText =
+                    "Cette estimation est donnée à titre indicatif. Pour un ajustement optimal, nous vous recommandons de confirmer votre taille avec un professionnel. N'hésitez pas à nous contacter pour obtenir des conseils personnalisés.";
+
+            }
         });
+
     </script>
 </body>
 
