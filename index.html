@@ -121,11 +121,23 @@
 
 <body>
     <h2>Calcul de Taille de Combinaison</h2>
+
     <label for="genre">Sélectionnez votre genre :</label>
     <select id="genre" onchange="updateForm()">
         <option value="femme">Femme</option>
         <option value="homme">Homme</option>
     </select>
+    <label for="nom">Nom :</label>
+    <input type="text" id="nom" required>
+
+    <label for="prenom">Prénom :</label>
+    <input type="text" id="prenom" required>
+
+    <label for="telephone">Téléphone :</label>
+    <input type="tel" id="telephone" required>
+    <label for="email">Votre adresse e-mail :</label>
+    <input type="email" id="email" required>
+
 
     <div class="container">
         <div class="image-container">
@@ -172,6 +184,8 @@
             tailleH: "",
             hipsH: ""
         };
+        let chosenSize = "Aucune taille trouvée.";
+
 
         function updateForm() {
             let genre = document.getElementById("genre").value;
@@ -208,7 +222,6 @@
         document.getElementById("sizeForm").addEventListener("submit", function (event) {
             event.preventDefault();
             let genre = document.getElementById("genre").value;
-            let chosenSize = "Aucune taille trouvée.";
 
             if (genre === "femme") {
                 let buste = Number(document.getElementById("buste").value) || 0;
@@ -267,6 +280,44 @@
                     "Cette estimation est donnée à titre indicatif. Pour un ajustement optimal, nous vous recommandons de confirmer votre taille avec un professionnel. N'hésitez pas à nous contacter pour obtenir des conseils personnalisés.";
 
             }
+        });
+
+        document.getElementById("genre").addEventListener("change", function () {
+            if (this.value === "femme") {
+                document.getElementById("femmeFields").style.display = "block";
+                document.getElementById("hommeFields").style.display = "none";
+            } else {
+                document.getElementById("femmeFields").style.display = "none";
+                document.getElementById("hommeFields").style.display = "block";
+            }
+        });
+
+        document.getElementById("sizeForm").addEventListener("submit", function (event) {
+            event.preventDefault();
+
+            let nom = document.getElementById("nom").value;
+            let prenom = document.getElementById("prenom").value;
+            let telephone = document.getElementById("telephone").value;
+            const email = document.getElementById("email").value;
+            const genre = document.getElementById("genre").value;
+
+            let message = `Genre: ${genre}\nNom & Prénom: ${nom} ${prenom}\nTéléphone: ${telephone}\nEmail: ${email}\n`;
+
+            if (genre === "femme") {
+                const buste = document.getElementById("buste").value || "N/A";
+                const taille = document.getElementById("taille").value || "N/A";
+                const hips = document.getElementById("hips").value || "N/A";
+                const torso = document.getElementById("torso").value || "N/A";
+
+                message += `Buste: ${buste} cm\nTaille: ${taille} cm\nHanches: ${hips} cm\nTour de Torse: ${torso} cm\nTaille recommandée: ${chosenSize}`;
+            } else {
+                const tailleH = document.getElementById("tailleH").value || "N/A";
+                const hipsH = document.getElementById("hipsH").value || "N/A";
+
+                message += `Taille: ${tailleH} cm\nHanches: ${hipsH} cm\nTaille recommandée: ${chosenSize}`;
+            }
+
+            window.location.href = `mailto:drissg20@hotmail.com?subject=Demande de taille de combinaison&body=${encodeURIComponent(message)}`;
         });
 
     </script>
